@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <import type="android.view.View" />
+
+        <variable
+            name="model"
+            type="com.hung.ba.classicbluetoothcommunication.TransferDataViewModel" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".TransferDataFragment">
+
+        <TextView
+            android:id="@+id/tvPercent"
+            style="@style/TextAppearance.MaterialComponents.Headline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@{model.percentTransfer.toString()}"
+            tools:text="0%" />
+
+        <androidx.core.widget.ContentLoadingProgressBar
+            android:id="@+id/progressReadingFile"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:visibility="@{model.readingFile ? View.VISIBLE : View.GONE}" />
+
+        <Button
+            android:id="@+id/btnStartTransfer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:onClick="@{() -> model.startTransfer()}"
+            android:text="@string/start" />
+
+    </FrameLayout>
+</layout>

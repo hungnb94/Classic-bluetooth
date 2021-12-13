@@ -40,7 +40,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.hung.ba.classicbluetoothcommunication.MainActivity;
 import com.hung.ba.classicbluetoothcommunication.R;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * This is the main Activity that displays the current chat session.
@@ -77,7 +83,8 @@ public class BluetoothChat extends AppCompatActivity {
     // Local Bluetooth adapter
     private BluetoothAdapter mBluetoothAdapter = null;
     // Member object for the chat services
-    private BluetoothChatService mChatService = null;
+    public static BluetoothChatService mChatService = null;
+    private FileOutputStream outputStream;
 
 
     @Override
@@ -95,6 +102,12 @@ public class BluetoothChat extends AppCompatActivity {
         if (mBluetoothAdapter == null) {
             Toast.makeText(this, "Bluetooth is not available", Toast.LENGTH_LONG).show();
             finish();
+        }
+        File outputFile = new File(getFilesDir(), "bytes.txt");
+        try {
+            outputStream = new FileOutputStream(outputFile);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
     }
 
@@ -269,9 +282,15 @@ public class BluetoothChat extends AppCompatActivity {
                 break;
             case MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
+                int bytes = msg.arg1;
+                try {
+                    writeRawData(bytes, readBuf);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 // construct a string from the valid bytes in the buffer
-                String readMessage = new String(readBuf, 0, msg.arg1);
-                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
+//                String readMessage = new String(readBuf, 0, msg.arg1);
+//                mConversationArrayAdapter.add(mConnectedDeviceName+":  " + readMessage);
                 break;
             case MESSAGE_DEVICE_NAME:
                 // save the connected device's name
@@ -286,6 +305,19 @@ public class BluetoothChat extends AppCompatActivity {
             }
         }
     };
+
+    private final StringBuilder stringBuilder = new StringBuilder();
+
+    private void writeRawData(int bytesRead, byte[] bytes) throws IOException {
+        if (bytesRead <= 0) return;
+        stringBuilder.setLength(0);
+        for (int i = 0; i < bytesRead; i++) {
+            stringBuilder.append(String.format("%02X ", bytes[i]));
+        }
+        stringBuilder.setLength(stringBuilder.length() - 1);
+        stringBuilder.append("\n");
+        outputStream.write(stringBuilder.toString().getBytes());
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -353,8 +385,16 @@ public class BluetoothChat extends AppCompatActivity {
             // Ensure this device is discoverable by others
             ensureDiscoverable();
             return true;
+            case R.id.stream:
+            // Ensure this device is discoverable by others
+            openStreamDataScreen();
+            return true;
         }
         return false;
+    }
+
+    private void openStreamDataScreen() {
+        startActivity(new Intent(this, MainActivity.class));
     }
 
 }

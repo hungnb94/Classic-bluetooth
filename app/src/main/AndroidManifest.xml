@@ -19,6 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ClassicBluetoothCommunication">
         <activity
+            android:name=".MainActivity"
+            android:exported="false" />
+        <activity
             android:name="com.example.android.BluetoothChat.BluetoothChat"
             android:exported="true">
             <intent-filter>

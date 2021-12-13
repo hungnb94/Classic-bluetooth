@@ -18,15 +18,20 @@
         android:id="@+id/secure_connect_scan"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/secure_connect"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="withText" />
     <item
         android:id="@+id/insecure_connect_scan"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/insecure_connect"
-        app:showAsAction="ifRoom|withText" />
+        app:showAsAction="withText" />
     <item
         android:id="@+id/discoverable"
         android:icon="@android:drawable/ic_menu_mylocation"
         android:title="@string/discoverable"
         app:showAsAction="ifRoom|withText" />
+    <item
+        android:id="@+id/stream"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="@string/stream_data"
+        app:showAsAction="withText" />
 </menu>

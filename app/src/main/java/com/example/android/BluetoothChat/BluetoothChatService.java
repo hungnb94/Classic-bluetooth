@@ -240,14 +240,14 @@ public class BluetoothChatService {
      */
     public void write(byte[] out) {
         // Create temporary object
-        ConnectedThread r;
+        ConnectedThread connectedThread;
         // Synchronize a copy of the ConnectedThread
         synchronized (this) {
             if (mState != STATE_CONNECTED) return;
-            r = mConnectedThread;
+            connectedThread = mConnectedThread;
         }
         // Perform the write un-synchronized
-        r.write(out);
+        connectedThread.write(out);
     }
 
     /**
