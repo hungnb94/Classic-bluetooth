@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.hung.ba.classicbluetoothcommunication.databinding.TransferDataFragmentBinding
+import java.text.DecimalFormat
 
 class TransferDataFragment : Fragment() {
 
@@ -30,6 +31,23 @@ class TransferDataFragment : Fragment() {
         viewModel = ViewModelProvider(this)[TransferDataViewModel::class.java]
         binding?.model = viewModel
         viewModel.readData(requireActivity().assets.open("XiaomiRawBytes.txt"))
+        val numberFormat = DecimalFormat.getPercentInstance()
+        numberFormat.minimumFractionDigits = 2
+        numberFormat.maximumFractionDigits = 2
+        viewModel.percentTransfer.observe(viewLifecycleOwner, { percent ->
+            binding?.tvPercent?.run {
+                val percentStr = numberFormat.format(percent)
+                if (percentStr !== text) {
+                    text = percentStr
+                }
+            }
+        })
+        viewModel.readingFile.observe(viewLifecycleOwner, { reading ->
+            binding?.progressReadingFile?.run {
+                visibility = if (reading) View.VISIBLE
+                else View.GONE
+            }
+        })
     }
 
     override fun onDestroyView() {

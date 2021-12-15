@@ -29,8 +29,10 @@ class TransferDataViewModel : ViewModel() {
     fun readData(inputStream: InputStream) {
         _readingFile.postValue(true)
         viewModelScope.launch(Dispatchers.IO) {
+            Log.e(TAG, "readData: start read file")
             bytes = BytesReading.read(inputStream)
             _readingFile.postValue(false)
+            Log.e(TAG, "readData: finish read file")
         }
     }
 
@@ -38,8 +40,14 @@ class TransferDataViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val startTime = System.currentTimeMillis()
             Log.i(TAG, "startTransfer: $startTime")
+            var count = 0
+            val length = bytes.size.toFloat()
             bytes.forEach {
                 bluetoothService.write(byteArrayOf(it))
+                ++count
+                val percent = count / length
+                _percentTransfer.postValue(percent)
+                Log.i(TAG, "startTransfer: percent upload $percent")
             }
             val finishTime = System.currentTimeMillis()
             Log.i(TAG, "finishTransfer: $finishTime, total time: ${finishTime - startTime}")
