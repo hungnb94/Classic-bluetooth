@@ -65,10 +65,12 @@ class TransferDataViewModel : ViewModel() {
         var position = 0
         var byteArray = ByteArray(packetLength)
         var byteCount = 0
+        var nextTime: Long = startTime + connectionInterval
         bytes.forEach {
             byteArray[byteCount++] = it
             if (byteCount == packetLength) {
-                delay(connectionInterval)
+                delay(nextTime - System.currentTimeMillis())
+                nextTime += connectionInterval
                 bluetoothService.write(byteArray)
                 byteCount = 0
                 byteArray = ByteArray(packetLength)
