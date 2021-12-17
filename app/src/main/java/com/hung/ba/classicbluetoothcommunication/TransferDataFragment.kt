@@ -48,6 +48,13 @@ class TransferDataFragment : Fragment() {
                 else View.GONE
             }
         })
+        viewModel.transferDuration.observe(viewLifecycleOwner, { duration ->
+            binding?.tvDuration?.run {
+                val minutes = duration / 1000 / 60
+                val seconds = (duration / 1000 % 60)
+                text = String.format("%02d:%02d", minutes, seconds)
+            }
+        })
     }
 
     override fun onDestroyView() {
