@@ -1,5 +1,6 @@
 package com.hung.ba.classicbluetoothcommunication
 
+import android.text.TextUtils
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,7 +28,7 @@ class TransferDataViewModel : ViewModel() {
     private var connectionInterval = 0
 
     private lateinit var bytes: List<Byte>
-    private val bluetoothService: BluetoothChatService? = BluetoothChat.mChatService
+    private val bluetoothService: BluetoothChatService = BluetoothChat.mChatService
 
     companion object {
         private const val TAG = "TransferDataViewModel"
@@ -43,12 +44,12 @@ class TransferDataViewModel : ViewModel() {
         }
     }
 
-    fun onPacketLengthChange(text: CharSequence?, start: Int, before: Int, count: Int) {
-        packetLength = Integer.parseInt(text?.toString() ?: "0")
+    fun onPacketLengthChange(text: CharSequence, start: Int, before: Int, count: Int) {
+        packetLength = Integer.parseInt(if (TextUtils.isEmpty(text)) "0" else text.toString())
     }
 
-    fun onConnectionIntervalChange(text: CharSequence?, start: Int, before: Int, count: Int) {
-        connectionInterval = Integer.parseInt(text?.toString() ?: "0")
+    fun onConnectionIntervalChange(text: CharSequence, start: Int, before: Int, count: Int) {
+        connectionInterval = Integer.parseInt(if (TextUtils.isEmpty(text)) "0" else text.toString())
     }
 
     fun startTransfer() {
@@ -62,18 +63,22 @@ class TransferDataViewModel : ViewModel() {
         Log.i(TAG, "startTransfer: $startTime")
         val length = bytes.size.toFloat()
         var position = 0
-        while (position < length) {
-            delay(connectionInterval)
-            val start = position
-            val end = start + packetLength
-            position = end
-            if (position > length) position = length.toInt()
-            val array = bytes.subList(start, end).toByteArray()
-            bluetoothService?.write(array)
-            val percent = position / length
-            _percentTransfer.postValue(percent)
+        var byteArray = ByteArray(packetLength)
+        var byteCount = 0
+        bytes.forEach {
+            byteArray[byteCount++] = it
+            if (byteCount == packetLength) {
+                delay(connectionInterval)
+                bluetoothService.write(byteArray)
+                byteCount = 0
+                byteArray = ByteArray(packetLength)
+            }
+            position++
+            _percentTransfer.postValue(position / length)
             _transferDuration.postValue(System.currentTimeMillis() - startTime)
-            Log.i(TAG, "startTransfer: percent upload $percent")
+        }
+        if (byteCount in 1 until packetLength) {
+            bluetoothService.write(byteArray.copyOfRange(0, byteCount + 1))
         }
         val finishTime = System.currentTimeMillis()
         Log.i(TAG, "finishTransfer: $finishTime, total time: ${finishTime - startTime}")
