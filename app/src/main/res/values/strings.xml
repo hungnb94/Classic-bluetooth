@@ -24,4 +24,9 @@
     <string name="discoverable">Make discoverable</string>
     <string name="start">Start</string>
     <string name="stream_data">Stream data</string>
+    <string name="_1000">1000</string>
+    <string name="_1">1</string>
+    <string name="connection_interval">Connection interval</string>
+    <string name="packet_length">Packet length</string>
+    <string name="_0">0</string>
 </resources>

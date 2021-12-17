@@ -14,6 +14,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="20dp"
         tools:context=".TransferDataFragment">
 
         <TextView
@@ -45,11 +46,43 @@
             android:id="@+id/btnStartTransfer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginBottom="20dp"
+            android:layout_centerHorizontal="true"
             android:onClick="@{() -> model.startTransfer()}"
             android:text="@string/start" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edtConnectionInterval"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/edtPacketLength"
+            android:hint="@string/connection_interval">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:onTextChanged="@{model.onConnectionIntervalChange}"
+                android:text="@string/_0" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edtPacketLength"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/btnStartTransfer"
+            android:layout_marginBottom="10dp"
+            android:hint="@string/packet_length">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:onTextChanged="@{model.onPacketLengthChange}"
+                android:text="@string/_1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     </RelativeLayout>
 </layout>
